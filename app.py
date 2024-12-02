@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from age_redis import redistribute_male_numbers
 import random
 from datetime import datetime
 from population_distribution import distribute_numbers
@@ -6,12 +7,11 @@ from my_name_generator import (
     male_names, male_upadhi, 
     female_names, female_upadhi, 
     generate_birthdate, calculate_age, 
-    generate_weight_and_height
+    generate_weight_and_height, generate_lmp_date
 )
 from child_data import child_data
 
 app = Flask(__name__)
-
 
 @app.route('/')
 def index():
@@ -43,10 +43,12 @@ def name_generator():
             generated_name = random.choice(male_names) + " " + random.choice(male_upadhi)
             fathers_name = random.choice(male_names) + " " + random.choice(male_upadhi)
             mothers_name = random.choice(female_names) + " " + random.choice(female_upadhi)
+            lmp_date = None  # No LMP for male
         elif gender == 'f':
             generated_name = random.choice(female_names) + " " + random.choice(female_upadhi)
             fathers_name = random.choice(male_names) + " " + random.choice(male_upadhi)
             mothers_name = random.choice(female_names) + " " + random.choice(female_upadhi)
+            lmp_date = generate_lmp_date()  # Generate LMP date for females
         else:
             return "Invalid gender", 400
         
@@ -63,7 +65,8 @@ def name_generator():
                                age=age, 
                                weight=weight, 
                                height=height,
-                               gender=gender)
+                               gender=gender,
+                               lmp_date=lmp_date)
     
     return render_template('name_generator.html')
 
@@ -88,10 +91,30 @@ def child_growth_data():
 
 @app.route('/age-redistribution', methods=['GET', 'POST'])
 def age_redistribution():
+    redistributed_data = None
+    original_data = {}
+
     if request.method == 'POST':
-        # Placeholder for age redistribution logic
-        pass
-    return render_template('age_redistribution.html')
+        # Get the original values from the form
+        original_5_14 = int(request.form['original_5_14'])
+        original_15_24 = int(request.form['original_15_24'])
+        original_25_49 = int(request.form['original_25_49'])
+        original_50_plus = int(request.form['original_50_plus'])
+
+        # Store original values in a dictionary to pass them to the template
+        original_data = {
+            '5-14': original_5_14,
+            '15-24': original_15_24,
+            '25-49': original_25_49,
+            '50+': original_50_plus
+        }
+
+        # Redistribute the numbers
+        redistributed_data = redistribute_male_numbers(original_5_14, original_15_24, original_25_49, original_50_plus)
+        
+    return render_template('age_redistribution.html', redistributed_data=redistributed_data, original_data=original_data)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

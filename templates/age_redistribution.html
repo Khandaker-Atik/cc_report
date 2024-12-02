@@ -49,21 +49,7 @@
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     >
                 </div>
-            </div>
-            
-            <div class="mt-6">
-                <h3 class="text-xl font-bold mb-4">Redistribution Method</h3>
-                <div class="flex items-center mb-4">
-                    <input type="radio" name="redistribution_method" value="proportional" id="proportional" 
-                        class="mr-2" checked>
-                    <label for="proportional" class="mr-4">Proportional Distribution</label>
-                    
-                    <input type="radio" name="redistribution_method" value="custom" id="custom" 
-                        class="mr-2">
-                    <label for="custom">Custom Distribution</label>
-                </div>
-            </div>
-            
+            </div> <br>
             <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                 Redistribute Age Groups
             </button>
@@ -72,21 +58,20 @@
         {% if redistributed_data %}
         <div class="mt-6 bg-red-100 p-6 rounded-lg">
             <h2 class="text-2xl font-bold mb-4">Redistributed Age Groups</h2>
-            
             <table class="w-full border-collapse">
                 <thead>
                     <tr class="bg-red-200">
                         <th class="border p-2">Original Age Group</th>
-                        <th class="border p-2">Redistributed Age Group</th>
-                        <th class="border p-2">Population</th>
+                        <th class="border p-2">Total Population</th>
+                        <th class="border p-2">Redistributed Population</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for original, redistributed, population in redistributed_data %}
+                    {% for original_group, total_population, redistributed_population in redistributed_data %}
                     <tr>
-                        <td class="border p-2">{{ original }}</td>
-                        <td class="border p-2">{{ redistributed }}</td>
-                        <td class="border p-2 text-center">{{ population }}</td>
+                        <td class="border p-2">{{ original_group }}</td>
+                        <td class="border p-2 text-center">{{ total_population }}</td>
+                        <td class="border p-2 text-center">{{ redistributed_population }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
