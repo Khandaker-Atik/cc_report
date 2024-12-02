@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Group Redistribution</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-red-600 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-white text-2xl font-bold">Age Group Redistribution</h1>
+            <a href="/" class="text-white hover:bg-red-700 px-3 py-2 rounded">Back to Home</a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+        <form method="POST" class="mb-6">
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="original_5_14">
+                        Original 5-14 years
+                    </label>
+                    <input type="number" name="original_5_14" id="original_5_14" required
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    >
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="original_15_24">
+                        Original 15-24 years
+                    </label>
+                    <input type="number" name="original_15_24" id="original_15_24" required
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    >
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="original_25_49">
+                        Original 25-49 years
+                    </label>
+                    <input type="number" name="original_25_49" id="original_25_49" required
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    >
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="original_50_plus">
+                        Original 50+ years
+                    </label>
+                    <input type="number" name="original_50_plus" id="original_50_plus" required
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    >
+                </div>
+            </div>
+            
+            <div class="mt-6">
+                <h3 class="text-xl font-bold mb-4">Redistribution Method</h3>
+                <div class="flex items-center mb-4">
+                    <input type="radio" name="redistribution_method" value="proportional" id="proportional" 
+                        class="mr-2" checked>
+                    <label for="proportional" class="mr-4">Proportional Distribution</label>
+                    
+                    <input type="radio" name="redistribution_method" value="custom" id="custom" 
+                        class="mr-2">
+                    <label for="custom">Custom Distribution</label>
+                </div>
+            </div>
+            
+            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                Redistribute Age Groups
+            </button>
+        </form>
+
+        {% if redistributed_data %}
+        <div class="mt-6 bg-red-100 p-6 rounded-lg">
+            <h2 class="text-2xl font-bold mb-4">Redistributed Age Groups</h2>
+            
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-red-200">
+                        <th class="border p-2">Original Age Group</th>
+                        <th class="border p-2">Redistributed Age Group</th>
+                        <th class="border p-2">Population</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for original, redistributed, population in redistributed_data %}
+                    <tr>
+                        <td class="border p-2">{{ original }}</td>
+                        <td class="border p-2">{{ redistributed }}</td>
+                        <td class="border p-2 text-center">{{ population }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

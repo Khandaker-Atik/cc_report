@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Population Distribution</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-blue-600 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-white text-2xl font-bold">Population Distribution</h1>
+            <a href="/" class="text-white hover:bg-blue-700 px-3 py-2 rounded">Back to Home</a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+        <form method="POST" class="mb-6">
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="total_male">
+                        Total Male Population
+                    </label>
+                    <input type="number" name="total_male" id="total_male" required
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    >
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="total_female">
+                        Total Female Population
+                    </label>
+                    <input type="number" name="total_female" id="total_female" required
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    >
+                </div>
+            </div>
+            <button type="submit" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Generate Distribution
+            </button>
+        </form>
+
+        {% if male_numbers %}
+        <div class="mt-6">
+            <h2 class="text-2xl font-bold mb-4">Population Distribution Results</h2>
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="border p-2">Age Group</th>
+                        <th class="border p-2">Male Population</th>
+                        <th class="border p-2">Female Population</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border p-2">5-14 years</td>
+                        <td class="border p-2 text-center">{{ male_numbers[0] }}</td>
+                        <td class="border p-2 text-center">{{ female_numbers[0] }}</td>
+                    </tr>
+                    <tr>
+                        <td class="border p-2">15-24 years</td>
+                        <td class="border p-2 text-center">{{ male_numbers[1] }}</td>
+                        <td class="border p-2 text-center">{{ female_numbers[1] }}</td>
+                    </tr>
+                    <tr>
+                        <td class="border p-2">25-49 years</td>
+                        <td class="border p-2 text-center">{{ male_numbers[2] }}</td>
+                        <td class="border p-2 text-center">{{ female_numbers[2] }}</td>
+                    </tr>
+                    <tr>
+                        <td class="border p-2">50+ years</td>
+                        <td class="border p-2 text-center">{{ male_numbers[3] }}</td>
+                        <td class="border p-2 text-center">{{ female_numbers[3] }}</td>
+                    </tr>
+                    <tr class="bg-gray-200 font-bold">
+                        <td class="border p-2">Total</td>
+                        <td class="border p-2 text-center">{{ total_male }}</td>
+                        <td class="border p-2 text-center">{{ total_female }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

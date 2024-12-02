@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Child Growth Data</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-purple-600 p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-white text-2xl font-bold">Child Growth Data</h1>
+            <a href="/" class="text-white hover:bg-purple-700 px-4 py-2 rounded transition">Back to Home</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto mt-10 p-8 bg-white shadow-lg rounded-lg">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Comprehensive Child Growth Data</h2>
+
+        <!-- Flex Container for Tables -->
+        <div class="flex flex-wrap justify-between gap-8">
+            <!-- Male Data Table -->
+            <div class="flex-1 min-w-[300px]">
+                <h3 class="text-2xl font-semibold text-purple-600 mb-4">Male Growth Data</h3>
+                <table class="w-full border-collapse bg-purple-50 shadow-md rounded-lg overflow-hidden">
+                    <thead>
+                        <tr class="bg-purple-200">
+                            <th class="border p-3 text-left">Month</th>
+                            <th class="border p-3 text-center">Height (cm)</th>
+                            <th class="border p-3 text-center">Weight (kg)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for month, data in child_data['male'].items() %}
+                        <tr class="hover:bg-purple-100 transition">
+                            <td class="border p-3">{{ month }}</td>
+                            <td class="border p-3 text-center">{{ data['height'] }}</td>
+                            <td class="border p-3 text-center">{{ data['weight'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Female Data Table -->
+            <div class="flex-1 min-w-[300px]">
+                <h3 class="text-2xl font-semibold text-pink-600 mb-4">Female Growth Data</h3>
+                <table class="w-full border-collapse bg-pink-50 shadow-md rounded-lg overflow-hidden">
+                    <thead>
+                        <tr class="bg-pink-200">
+                            <th class="border p-3 text-left">Month</th>
+                            <th class="border p-3 text-center">Height (cm)</th>
+                            <th class="border p-3 text-center">Weight (kg)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for month, data in child_data['female'].items() %}
+                        <tr class="hover:bg-pink-100 transition">
+                            <td class="border p-3">{{ month }}</td>
+                            <td class="border p-3 text-center">{{ data['height'] }}</td>
+                            <td class="border p-3 text-center">{{ data['weight'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Growth Visualization -->
+        <div class="mt-12">
+            <h3 class="text-3xl font-bold text-center text-purple-600 mb-8">Growth Visualization</h3>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <canvas id="heightChart" class="shadow-md rounded-lg"></canvas>
+                </div>
+                <div>
+                    <canvas id="weightChart" class="shadow-md rounded-lg"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white p-4 mt-12 text-center shadow-md">
+        <p>&copy; 2024 Child Growth Data System. All rights reserved.</p>
+    </footer>
+
+    <!-- ChartJS Script -->
+    <script>
+        // Height Chart
+        const heightCtx = document.getElementById('heightChart').getContext('2d');
+        const heightChart = new Chart(heightCtx, {
+            type: 'line',
+            data: {
+                labels: {{ labels | tojson }},  // Pass the labels from backend
+                datasets: [
+                    {
+                        label: 'Male Height',
+                        data: {{ male_heights | tojson }},
+                        borderColor: 'blue',
+                        backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Female Height',
+                        data: {{ female_heights | tojson }},
+                        borderColor: 'pink',
+                        backgroundColor: 'rgba(255, 192, 203, 0.1)',
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Child Height Growth Over Time',
+                        font: { size: 18 }
+                    }
+                },
+                scales: {
+                    x: { title: { display: true, text: 'Months' } },
+                    y: { title: { display: true, text: 'Height (cm)' } }
+                }
+            }
+        });
+
+        // Weight Chart
+        const weightCtx = document.getElementById('weightChart').getContext('2d');
+        const weightChart = new Chart(weightCtx, {
+            type: 'line',
+            data: {
+                labels: {{ labels | tojson }},  // Pass the labels from backend
+                datasets: [
+                    {
+                        label: 'Male Weight',
+                        data: {{ male_weights | tojson }},
+                        borderColor: 'green',
+                        backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Female Weight',
+                        data: {{ female_weights | tojson }},
+                        borderColor: 'red',
+                        backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Child Weight Growth Over Time',
+                        font: { size: 18 }
+                    }
+                },
+                scales: {
+                    x: { title: { display: true, text: 'Months' } },
+                    y: { title: { display: true, text: 'Weight (kg)' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Population Data Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-blue-600 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-white text-2xl font-bold">Population Data Management</h1>
+            <div class="space-x-4">
+                <a href="/" class="text-white hover:bg-blue-700 px-3 py-2 rounded">Home</a>
+                <a href="/population-distribution" class="text-white hover:bg-blue-700 px-3 py-2 rounded">General Report</a>
+                <a href="/name-generator" class="text-white hover:bg-blue-700 px-3 py-2 rounded">Name Generator</a>
+                <a href="/child-data" class="text-white hover:bg-blue-700 px-3 py-2 rounded">Child Data</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+        <h2 class="text-3xl font-bold mb-6 text-center">Welcome to Population Data Management System</h2>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-blue-100 p-6 rounded-lg">
+                <h3 class="text-xl font-semibold mb-4">General Report</h3>
+                <p class="mb-4">Generate and view population distribution across different age groups and genders.</p>
+                <a href="/population-distribution" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    Go to General Report
+                </a>
+            </div>
+
+            <div class="bg-green-100 p-6 rounded-lg">
+                <h3 class="text-xl font-semibold mb-4">Name Generator</h3>
+                <p class="mb-4">Generate random names for males and females with additional details.</p>
+                <a href="/name-generator" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                    Go to Name Generator
+                </a>
+            </div>
+
+            <div class="bg-purple-100 p-6 rounded-lg">
+                <h3 class="text-xl font-semibold mb-4">Child Growth Data</h3>
+                <p class="mb-4">View comprehensive child growth data for males and females.</p>
+                <a href="/child-data" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                    Go to Child Data
+                </a>
+            </div>
+
+            <div class="bg-red-100 p-6 rounded-lg">
+                <h3 class="text-xl font-semibold mb-4">Age Group Redistribution</h3>
+                <p class="mb-4">Redistribute population data across different age group configurations.</p>
+                <a href="/age-redistribution" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                    Go to Age Redistribution
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white p-4 mt-10 text-center">
+        <p>&copy; 2024 Population Data Management System. All rights reserved.</p>
+    </footer>
+</body>
+</html>

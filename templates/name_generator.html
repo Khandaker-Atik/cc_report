@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Name Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-green-600 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-white text-2xl font-bold">Name Generator</h1>
+            <a href="/" class="text-white hover:bg-green-700 px-3 py-2 rounded">Back to Home</a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+        <form method="POST" class="mb-6">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                    Select Gender
+                </label>
+                <div class="flex items-center">
+                    <input type="radio" name="gender" value="m" id="male" 
+                        class="mr-2" required>
+                    <label for="male" class="mr-4">Male</label>
+                    
+                    <input type="radio" name="gender" value="f" id="female" 
+                        class="mr-2">
+                    <label for="female">Female</label>
+                </div>
+            </div>
+            
+            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                Generate Name
+            </button>
+        </form>
+
+        {% if generated_name %}
+        <div class="mt-6 bg-green-100 p-6 rounded-lg">
+            <h2 class="text-2xl font-bold mb-4">Generated {{ 'Male' if gender == 'm' else 'Female' }} Profile</h2>
+            
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <p><strong>Name:</strong> {{ generated_name }}</p>
+                    <p><strong>Father's Name:</strong> {{ fathers_name }}</p>
+                    <p><strong>Mother's Name:</strong> {{ mothers_name }}</p>
+                </div>
+                <div>
+                    <p><strong>Birthdate:</strong> {{ birthdate }}</p>
+                    <p><strong>Age:</strong> {{ age }} years</p>
+                    <p><strong>Weight:</strong> {{ weight }} kg</p>
+                    <p><strong>Height:</strong> {{ height }} cm</p>
+                    {% if lmp_date %}
+                    <p><strong>LMP Date:</strong> {{ lmp_date }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+
