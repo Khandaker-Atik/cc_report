@@ -1,5 +1,10 @@
-# child_data.py
+# Let's prepare the data and logic first in Python, then I'll provide the Flask app and HTML template accordingly.
+# We'll start by defining the age rounding and vaccine schedule logic based on the user's specifications.
 
+import math
+from datetime import datetime
+
+# Load child_data
 child_data = {
     "male": {
         "Month 1": {"height": 56.5, "weight": 4.5},
@@ -14,17 +19,6 @@ child_data = {
         "Month 10": {"height": 75.5, "weight": 9.5},
         "Month 11": {"height": 76.5, "weight": 9.8},
         "Month 12": {"height": 77.5, "weight": 10.0},
-        "Month 13": {"height": 78.5, "weight": 10.2},
-        "Month 14": {"height": 79.5, "weight": 10.5},
-        "Month 15": {"height": 80.5, "weight": 10.7},
-        "Month 16": {"height": 81.0, "weight": 10.8},
-        "Month 17": {"height": 82.0, "weight": 11.0},
-        "Month 18": {"height": 83.0, "weight": 11.2},
-        "Month 19": {"height": 84.0, "weight": 11.4},
-        "Month 20": {"height": 85.0, "weight": 11.6},
-        "Month 21": {"height": 86.0, "weight": 11.8},
-        "Month 22": {"height": 87.0, "weight": 12.0},
-        "Month 23": {"height": 88.0, "weight": 12.2}
     },
     "female": {
         "Month 1": {"height": 55.0, "weight": 4.2},
@@ -39,16 +33,54 @@ child_data = {
         "Month 10": {"height": 73.5, "weight": 8.9},
         "Month 11": {"height": 74.5, "weight": 9.2},
         "Month 12": {"height": 75.5, "weight": 9.4},
-        "Month 13": {"height": 76.5, "weight": 9.6},
-        "Month 14": {"height": 77.5, "weight": 9.8},
-        "Month 15": {"height": 78.5, "weight": 10.0},
-        "Month 16": {"height": 79.0, "weight": 10.2},
-        "Month 17": {"height": 80.0, "weight": 10.4},
-        "Month 18": {"height": 81.0, "weight": 10.6},
-        "Month 19": {"height": 82.0, "weight": 10.8},
-        "Month 20": {"height": 83.0, "weight": 11.0},
-        "Month 21": {"height": 84.0, "weight": 11.2},
-        "Month 22": {"height": 85.0, "weight": 11.4},
-        "Month 23": {"height": 86.0, "weight": 11.6}
     }
 }
+
+# Sample vaccine milestones
+vaccine_schedule = {
+    1: ["BCG completed"],
+    2: ["Penta-1 completed"],
+    3: ["Penta-2 completed"],
+    4: ["Penta-3 completed"],
+    9: ["Measles completed"]
+}
+
+def parse_age(age_decimal):
+    months = int(age_decimal)
+    days_decimal = age_decimal - months
+    days = int(days_decimal * 100)
+    if days > 30:
+        months += 1
+        days = 1
+    return months, days
+
+def get_growth_data(gender, age_decimal, entered_height):
+    months, days = parse_age(age_decimal)
+    label = f"Month {months}"
+    data = child_data.get(gender, {}).get(label)
+
+    if not data:
+        return None
+
+    std_height = data["height"]
+    if entered_height > std_height:
+        verdict = "Above average"
+    elif entered_height < std_height:
+        verdict = "Below average"
+    else:
+        verdict = "Normal"
+
+    vaccines = []
+    for m, v in vaccine_schedule.items():
+        if months >= m:
+            vaccines.extend(v)
+
+    return {
+        "month_label": label,
+        "standard_height": std_height,
+        "entered_height": entered_height,
+        "verdict": verdict,
+        "vaccines": vaccines,
+        "age_string": f"{months} months {days} days"
+    }
+
