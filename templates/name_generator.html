@@ -1,66 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Name Generator</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Name Generator</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+  </style>
 </head>
-<body class="bg-gray-100">
-    <nav class="bg-green-600 p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-white text-2xl font-bold">Name Generator</h1>
-            <a href="/" class="text-white hover:bg-blue-700 px-3 py-2 rounded">
-                <img src="https://images.vexels.com/content/147093/preview/instagram-home-button-83bdf4.png" alt="Back to Home" class="w-9 h-10">  <!-- Logo as back button -->
-            </a>
-        </div>
-    </nav>
-
-    <div class="container mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-        <form method="POST" class="mb-6">
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">
-                    Select Gender
-                </label>
-                <div class="flex items-center">
-                    <input type="radio" name="gender" value="m" id="male" 
-                        class="mr-2" required>
-                    <label for="male" class="mr-4">Male</label>
-                    
-                    <input type="radio" name="gender" value="f" id="female" 
-                        class="mr-2">
-                    <label for="female">Female</label>
-                </div>
-            </div>
-            
-            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                Generate Name
-            </button>
-        </form>
-
-        {% if generated_name %}
-        <div class="mt-6 bg-green-100 p-6 rounded-lg">
-            <h2 class="text-2xl font-bold mb-4">Generated {{ 'Male' if gender == 'm' else 'Female' }} Profile</h2>
-            
-            <div class="grid md:grid-cols-2 gap-4">
-                <div>
-                    <p><strong>Name:</strong> {{ generated_name }}</p>
-                    <p><strong>Father's Name:</strong> {{ fathers_name }}</p>
-                    <p><strong>Mother's Name:</strong> {{ mothers_name }}</p>
-                </div>
-                <div>
-                    <p><strong>Birthdate:</strong> {{ birthdate }}</p>
-                    <p><strong>Age:</strong> {{ age }} years</p>
-                    <p><strong>Weight:</strong> {{ weight }} kg</p>
-                    <p><strong>Height:</strong> {{ height }} cm</p>
-                    {% if lmp_date %}
-                    <p><strong>LMP Date:</strong> {{ lmp_date }}</p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        {% endif %}
+<body class="bg-gradient-to-br from-green-100 via-white to-green-50 min-h-screen">
+  <nav class="bg-green-600 p-4 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-white text-2xl font-bold">Name Generator</h1>
+      <a href="/" class="bg-white text-green-700 font-medium px-4 py-2 rounded hover:bg-green-100 transition">
+        Home
+      </a>
     </div>
+  </nav>
+
+  <!-- Google Sheets Status -->
+  {% if sheet_info %}
+  <div class="container mx-auto max-w-3xl mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center">
+        {% if sheet_info.using_sheets %}
+          <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+          <span class="text-sm text-gray-700">
+            Connected to Google Sheets: {{ sheet_info.male_count }} male names, {{ sheet_info.female_count }} female names
+          </span>
+        {% else %}
+          <div class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
+          <span class="text-sm text-gray-700">Using fallback names (Google Sheets unavailable)</span>
+        {% endif %}
+      </div>
+      <button onclick="refreshNames()" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+        Refresh Names
+      </button>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Form Section -->
+  <div class="container mx-auto max-w-3xl mt-6 p-6 bg-white shadow-xl rounded-xl border border-gray-200">
+    <form method="POST" class="space-y-6">
+      <!-- Gender Selection -->
+      <div>
+        <label class="block text-gray-700 text-sm font-semibold mb-2">
+          Select Gender
+        </label>
+        <div class="flex items-center gap-6">
+          <label class="inline-flex items-center">
+            <input type="radio" name="gender" value="m" id="male" class="form-radio h-4 w-4 text-green-600" required>
+            <span class="ml-2 text-gray-800">Male</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="radio" name="gender" value="f" id="female" class="form-radio h-4 w-4 text-green-600">
+            <span class="ml-2 text-gray-800">Female</span>
+          </label>
+        </div>
+      </div>
+      
+      <!-- Submit -->
+      <div class="flex gap-4">
+        <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition">
+          Generate Name
+        </button>
+      </div>
+    </form>
+
+    <!-- Result -->
+    {% if generated_name %}
+    <div class="mt-8 bg-green-50 border border-green-200 rounded-xl p-6 shadow-md">
+      <h2 class="text-2xl font-bold text-green-700 mb-4">
+        Generated {{ 'Male' if gender == 'm' else 'Female' }} Profile
+      </h2>
+      <div class="grid md:grid-cols-2 gap-6 text-gray-800">
+        <!-- Left Info -->
+        <div class="space-y-2">
+          <p><strong>Name:</strong> {{ generated_name }}</p>
+          <p><strong>Father's Name:</strong> {{ fathers_name }}</p>
+          <p><strong>Mother's Name:</strong> {{ mothers_name }}</p>
+        </div>
+        <!-- Right Info -->
+        <div class="space-y-2">
+          <p><strong>Birthdate:</strong> {{ birthdate }}</p>
+          <p><strong>Age:</strong> {{ age }} years</p>
+          <p><strong>Weight:</strong> {{ weight }} kg</p>
+          <p><strong>Height:</strong> {{ height }} cm</p>
+          {% if lmp_date %}
+          <p><strong>LMP Date:</strong> {{ lmp_date }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+    {% endif %}
+  </div>
+
+
+  <script>
+    function refreshNames() {
+      fetch('/refresh-names')
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            alert(`Names refreshed! ${data.male_count} male names, ${data.female_count} female names loaded.`);
+            location.reload();
+          } else {
+            alert('Error refreshing names: ' + data.message);
+          }
+        })
+        .catch(error => {
+          alert('Error refreshing names: ' + error);
+        });
+    }
+
+    function generateAnother() {
+      // Get the currently selected gender
+      const selectedGender = document.querySelector('input[name="gender"]:checked');
+      if (selectedGender) {
+        // Submit the form to generate another name with the same gender
+        document.querySelector('form').submit();
+      } else {
+        alert('Please select a gender first');
+      }
+    }
+
+    // Remember the last selected gender
+    {% if gender %}
+    document.addEventListener('DOMContentLoaded', function() {
+      const genderRadio = document.getElementById('{{ "male" if gender == "m" else "female" }}');
+      if (genderRadio) {
+        genderRadio.checked = true;
+      }
+    });
+    {% endif %}
+  </script>
 </body>
 </html>
-
