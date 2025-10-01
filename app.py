@@ -138,7 +138,15 @@ def generate_lmp_date():
 
 def distribute_numbers(total_population):
     age_groups = [0.2, 0.3, 0.4, 0.1]  # 20%, 30%, 40%, 10%
-    return [int(total_population * p) for p in age_groups]
+    distributed = [int(total_population * p) for p in age_groups]
+    
+    # Calculate the difference due to rounding and add it to the largest group
+    difference = total_population - sum(distributed)
+    if difference != 0:
+        # Add the difference to the largest age group (25-49 years, index 2)
+        distributed[2] += difference
+    
+    return distributed
 
 # --------------------------------------------
 # Age Redistribution (for male)
@@ -261,7 +269,12 @@ def population_distribution():
                                total_male=total_male, 
                                total_female=total_female)
 
-    return render_template('population_distribution.html')
+    # For GET requests, pass None values to avoid template errors
+    return render_template('population_distribution.html', 
+                           male_numbers=None, 
+                           female_numbers=None, 
+                           total_male=None, 
+                           total_female=None)
 
 @app.route('/name-generator', methods=['GET', 'POST'])
 def name_generator():

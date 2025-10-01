@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Community Clinic Data Management{% endblock %}</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+    <!-- Custom Professional CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/professional.css') }}">
+    
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gradient-to-br from-pink-50 via-purple-50 via-blue-50 to-cyan-50 min-h-screen">
+    
+    <!-- Navigation -->
+    <nav class="pro-nav">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Logo/Brand -->
+                <a href="/" onclick="window.location.href='/'; return false;" class="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer">
+                    <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center hover:bg-opacity-30 transition-all">
+                        <i class="fas fa-home text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-white text-xl font-bold hover:text-blue-200 transition-colors">
+                            Community Clinic
+                        </div>
+                        <div class="text-blue-200 text-sm font-medium hover:text-blue-100 transition-colors">Data Management System</div>
+                    </div>
+                </a>
+                
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="/" onclick="window.location.reload();" class="text-white hover:text-blue-200 font-medium transition-colors flex items-center space-x-2">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="/population-distribution" class="text-white hover:text-blue-200 font-medium transition-colors flex items-center space-x-2">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Population</span>
+                    </a>
+                    <a href="/name-generator" class="text-white hover:text-blue-200 font-medium transition-colors flex items-center space-x-2">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Names</span>
+                    </a>
+                    <a href="/child-data" class="text-white hover:text-blue-200 font-medium transition-colors flex items-center space-x-2">
+                        <i class="fas fa-baby"></i>
+                        <span>Child Data</span>
+                    </a>
+                    <a href="/age-redistribution" class="text-white hover:text-blue-200 font-medium transition-colors flex items-center space-x-2">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Age Groups</span>
+                    </a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-white hover:text-blue-200 focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4">
+                <div class="flex flex-col space-y-3">
+                    <a href="/" onclick="window.location.reload();" class="text-white hover:text-blue-200 font-medium transition-colors flex items-center space-x-2 py-2">
+                        <i class="fas fa-home w-5"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="/population-distribution" class="text-white hover:text-blue-200 font-medium transition-colors flex items-center space-x-2 py-2">
+                        <i class="fas fa-chart-bar w-5"></i>
+                        <span>Population Distribution</span>
+                    </a>
+                    <a href="/name-generator" class="text-white hover:text-blue-200 font-medium transition-colors flex items-center space-x-2 py-2">
+                        <i class="fas fa-user-plus w-5"></i>
+                        <span>Name Generator</span>
+                    </a>
+                    <a href="/child-data" class="text-white hover:text-blue-200 font-medium transition-colors flex items-center space-x-2 py-2">
+                        <i class="fas fa-baby w-5"></i>
+                        <span>Child Growth Data</span>
+                    </a>
+                    <a href="/age-redistribution" class="text-white hover:text-blue-200 font-medium transition-colors flex items-center space-x-2 py-2">
+                        <i class="fas fa-exchange-alt w-5"></i>
+                        <span>Age Redistribution</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="container mx-auto max-w-7xl px-6 py-8">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="container mx-auto px-6 py-8">
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- About Section -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fas fa-info-circle mr-2 text-blue-400"></i>
+                        About System
+                    </h3>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        A comprehensive data management system designed for community clinics to efficiently handle population distribution, name generation, child growth tracking, and demographic analysis.
+                    </p>
+                </div>
+                
+                <!-- Features Section -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fas fa-cogs mr-2 text-green-400"></i>
+                        Key Features
+                    </h3>
+                    <ul class="text-gray-300 text-sm space-y-2">
+                        <li class="flex items-center"><i class="fas fa-check mr-2 text-green-500"></i>Population Analysis</li>
+                        <li class="flex items-center"><i class="fas fa-check mr-2 text-green-500"></i>Name Generation System</li>
+                        <li class="flex items-center"><i class="fas fa-check mr-2 text-green-500"></i>Child Growth Tracking</li>
+                        <li class="flex items-center"><i class="fas fa-check mr-2 text-green-500"></i>Age Group Redistribution</li>
+                    </ul>
+                </div>
+                
+                <!-- Developer Section -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fas fa-code mr-2 text-purple-400"></i>
+                        Developer
+                    </h3>
+                    <div class="text-gray-300 text-sm">
+                        <p class="mb-2">Developed by</p>
+                        <a href="https://khandaker-atik.vercel.app" target="_blank" 
+                           class="inline-flex items-center text-yellow-400 hover:text-yellow-300 font-semibold transition-colors">
+                            <i class="fas fa-external-link-alt mr-2"></i>
+                            Khandaker Atik
+                        </a>
+                        <p class="mt-2 text-xs text-gray-400">
+                            © 2025 All rights reserved
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom Footer -->
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center">
+                <p class="text-gray-400 text-sm">
+                    Professional Healthcare Data Management System | 
+                    <span class="text-blue-400">Version 2.0</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Professional JavaScript -->
+    <script src="{{ url_for('static', filename='js/professional.js') }}"></script>
+    
+    <!-- Mobile Menu Toggle Script -->
+    <script>
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (!mobileMenuBtn.contains(event.target) && !mobileMenu.contains(event.target)) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+    </script>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,98 +1,374 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Population Distribution</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
+{% extends "base.html" %}
+
+{% block title %}Population Distribution - Community Clinic Data Management{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="mb-8">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-4xl font-bold text-gray-800 mb-2 flex items-center">
+                <i class="fas fa-chart-bar text-blue-600 mr-4"></i>
+                Population Distribution
+            </h1>
+            <p class="text-gray-600 text-lg">Analyze demographic distribution across age groups and genders</p>
+        </div>
+        <div class="hidden md:flex items-center space-x-4">
+            <div class="text-right">
+                <div class="text-sm text-gray-500 uppercase tracking-wide">Analytics</div>
+                <div class="text-lg font-semibold text-gray-800">Data Processing</div>
+            </div>
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-users text-blue-600"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid lg:grid-cols-3 gap-8">
+    <!-- Input Form -->
+    <div class="lg:col-span-1">
+        <div class="pro-form">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Input Parameters</h2>
+                <p class="text-gray-600">Enter total population numbers for analysis</p>
+            </div>
+            
+            <form method="POST" class="space-y-6">
+                <div class="form-group">
+                    <label for="total_male" class="form-label">
+                        <i class="fas fa-mars mr-2"></i>
+                        Total Male Population
+                    </label>
+                    <input type="number" name="total_male" id="total_male" required
+                           class="form-control" placeholder="Enter male population"
+                           value="{{ total_male if total_male }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="total_female" class="form-label">
+                        <i class="fas fa-venus mr-2"></i>
+                        Total Female Population
+                    </label>
+                    <input type="number" name="total_female" id="total_female" required
+                           class="form-control" placeholder="Enter female population"
+                           value="{{ total_female if total_female }}">
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-full">
+                    <i class="fas fa-calculator mr-2"></i>
+                    Calculate Distribution
+                </button>
+                
+                {% if male_numbers %}
+                <button type="button" onclick="exportData()" class="btn btn-success w-full">
+                    <i class="fas fa-download mr-2"></i>
+                    Export Results
+                </button>
+                {% endif %}
+            </form>
+            
+            <!-- Distribution Info -->
+            <div class="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <h3 class="font-semibold text-blue-800 mb-2">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Distribution Formula
+                </h3>
+                <div class="text-sm text-blue-700 space-y-1">
+                    <p>• 5-14 years: 20% of total</p>
+                    <p>• 15-24 years: 30% of total</p>
+                    <p>• 25-49 years: 40% of total</p>
+                    <p>• 50+ years: 10% of total</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="lg:col-span-2">
+        {% if male_numbers %}
+        <div class="space-y-6">
+            <!-- Summary Cards -->
+            <div class="grid md:grid-cols-4 gap-4 mb-6">
+                <div class="pro-card pro-card-blue p-4 text-center">
+                    <div class="text-2xl font-bold text-blue-600">{{ total_male + total_female }}</div>
+                    <div class="text-sm text-gray-600">Total Population</div>
+                </div>
+                <div class="pro-card pro-card-blue p-4 text-center">
+                    <div class="text-2xl font-bold text-blue-600">{{ total_male }}</div>
+                    <div class="text-sm text-gray-600">Male Population</div>
+                </div>
+                <div class="pro-card pro-card-purple p-4 text-center">
+                    <div class="text-2xl font-bold text-purple-600">{{ total_female }}</div>
+                    <div class="text-sm text-gray-600">Female Population</div>
+                </div>
+                <div class="pro-card pro-card-green p-4 text-center">
+                    <div class="text-2xl font-bold text-green-600">{{ "%.1f"|format((total_male / (total_male + total_female) * 100)) }}%</div>
+                    <div class="text-sm text-gray-600">Male Ratio</div>
+                </div>
+            </div>
+
+            <!-- Distribution Table -->
+            <div class="result-card">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        <i class="fas fa-table mr-3"></i>
+                        Age Group Distribution
+                    </h2>
+                    <button onclick="toggleChart()" class="btn btn-info">
+                        <i class="fas fa-chart-pie mr-2"></i>
+                        View Chart
+                    </button>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="pro-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <i class="fas fa-users mr-2"></i>
+                                    Age Group
+                                </th>
+                                <th class="text-center">
+                                    <i class="fas fa-mars mr-2 text-blue-600"></i>
+                                    Male Population
+                                </th>
+                                <th class="text-center">
+                                    <i class="fas fa-venus mr-2 text-pink-600"></i>
+                                    Female Population
+                                </th>
+                                <th class="text-center">
+                                    <i class="fas fa-calculator mr-2"></i>
+                                    Total
+                                </th>
+                                <th class="text-center">
+                                    <i class="fas fa-percentage mr-2"></i>
+                                    Percentage
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-semibold">5-14 years</td>
+                                <td class="text-center font-semibold text-blue-600">{{ male_numbers[0] }}</td>
+                                <td class="text-center font-semibold text-pink-600">{{ female_numbers[0] }}</td>
+                                <td class="text-center font-semibold">{{ male_numbers[0] + female_numbers[0] }}</td>
+                                <td class="text-center">20%</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">15-24 years</td>
+                                <td class="text-center font-semibold text-blue-600">{{ male_numbers[1] }}</td>
+                                <td class="text-center font-semibold text-pink-600">{{ female_numbers[1] }}</td>
+                                <td class="text-center font-semibold">{{ male_numbers[1] + female_numbers[1] }}</td>
+                                <td class="text-center">30%</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">25-49 years</td>
+                                <td class="text-center font-semibold text-blue-600">{{ male_numbers[2] }}</td>
+                                <td class="text-center font-semibold text-pink-600">{{ female_numbers[2] }}</td>
+                                <td class="text-center font-semibold">{{ male_numbers[2] + female_numbers[2] }}</td>
+                                <td class="text-center">40%</td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">50+ years</td>
+                                <td class="text-center font-semibold text-blue-600">{{ male_numbers[3] }}</td>
+                                <td class="text-center font-semibold text-pink-600">{{ female_numbers[3] }}</td>
+                                <td class="text-center font-semibold">{{ male_numbers[3] + female_numbers[3] }}</td>
+                                <td class="text-center">10%</td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="bg-gray-50">
+                            <tr class="font-bold text-lg">
+                                <td>Total</td>
+                                <td class="text-center text-blue-600">{{ total_male }}</td>
+                                <td class="text-center text-pink-600">{{ total_female }}</td>
+                                <td class="text-center">{{ total_male + total_female }}</td>
+                                <td class="text-center">100%</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Chart Container -->
+            <div id="chartContainer" class="chart-container hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-gray-800">Population Distribution Chart</h3>
+                    <button onclick="toggleChart()" class="btn btn-warning">
+                        <i class="fas fa-table mr-2"></i>
+                        View Table
+                    </button>
+                </div>
+                <canvas id="populationChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="pro-card p-12 text-center">
+            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-chart-bar text-gray-400 text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Ready to Analyze</h3>
+            <p class="text-gray-600 max-w-md mx-auto mb-6">
+                Enter the total male and female population numbers in the form to generate a comprehensive demographic distribution analysis.
+            </p>
+            
+            <!-- Example Data -->
+            <div class="bg-gray-50 rounded-lg p-4 max-w-md mx-auto">
+                <div class="text-sm text-gray-600 mb-2">Example Distribution (1000 people):</div>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <div class="font-semibold">Age Groups:</div>
+                        <div class="text-gray-500">
+                            5-14: 200 (20%)<br>
+                            15-24: 300 (30%)<br>
+                            25-49: 400 (40%)<br>
+                            50+: 100 (10%)
+                        </div>
+                    </div>
+                    <div>
+                        <div class="font-semibold">Gender Split:</div>
+                        <div class="text-gray-500">
+                            Male: 500 (50%)<br>
+                            Female: 500 (50%)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let chartVisible = false;
+    let populationChart = null;
+
+    function toggleChart() {
+        const tableContainer = document.querySelector('.result-card');
+        const chartContainer = document.getElementById('chartContainer');
+        
+        if (chartVisible) {
+            tableContainer.classList.remove('hidden');
+            chartContainer.classList.add('hidden');
+            chartVisible = false;
+        } else {
+            tableContainer.classList.add('hidden');
+            chartContainer.classList.remove('hidden');
+            chartVisible = true;
+            
+            if (!populationChart) {
+                createChart();
+            }
+        }
     }
-  </style>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-</head>
-<body class="bg-gradient-to-br from-blue-100 via-white to-blue-50 min-h-screen">
 
-  <!-- Navbar -->
-  <nav class="bg-blue-600 p-4 shadow-md">
-    <div class="container mx-auto flex justify-between items-center">
-      <h1 class="text-white text-2xl font-bold">Population Distribution</h1>
-      <a href="/" class="bg-white text-blue-600 font-semibold px-4 py-2 rounded hover:bg-blue-100 transition">
-        Home
-      </a>
-    </div>
-  </nav>
+    function createChart() {
+        const ctx = document.getElementById('populationChart').getContext('2d');
+        
+        {% if male_numbers and female_numbers %}
+        const maleData = [{{ male_numbers[0] }}, {{ male_numbers[1] }}, {{ male_numbers[2] }}, {{ male_numbers[3] }}];
+        const femaleData = [{{ female_numbers[0] }}, {{ female_numbers[1] }}, {{ female_numbers[2] }}, {{ female_numbers[3] }}];
+        {% else %}
+        const maleData = [0, 0, 0, 0];
+        const femaleData = [0, 0, 0, 0];
+        {% endif %}
+        
+        populationChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['5-14 years', '15-24 years', '25-49 years', '50+ years'],
+                datasets: [{
+                    label: 'Male Population',
+                    data: maleData,
+                    backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 2,
+                    borderRadius: 8
+                }, {
+                    label: 'Female Population',
+                    data: femaleData,
+                    backgroundColor: 'rgba(236, 72, 153, 0.7)',
+                    borderColor: 'rgba(236, 72, 153, 1)',
+                    borderWidth: 2,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: 'white',
+                        bodyColor: 'white',
+                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                        borderWidth: 1
+                    }
+                },
+                animation: {
+                    duration: 1500,
+                    easing: 'easeInOutQuart'
+                }
+            }
+        });
+    }
 
-  <!-- Form & Results Section -->
-  <div class="container mx-auto max-w-3xl mt-10 p-6 bg-white shadow-xl rounded-xl border border-gray-200">
-
-    <!-- Form -->
-    <form method="POST" class="mb-8 space-y-6">
-      <div class="grid md:grid-cols-2 gap-6">
-        <div>
-          <label for="total_male" class="block text-sm font-semibold text-gray-700 mb-1">Total Male Population</label>
-          <input type="number" name="total_male" id="total_male" required
-                 class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50">
-        </div>
-        <div>
-          <label for="total_female" class="block text-sm font-semibold text-gray-700 mb-1">Total Female Population</label>
-          <input type="number" name="total_female" id="total_female" required
-                 class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50">
-        </div>
-      </div>
-      <div class="text-center">
-        <button type="submit" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded transition-all">
-          Generate Distribution
-        </button>
-      </div>
-    </form>
-
-    <!-- Results -->
-    {% if male_numbers %}
-    <div class="mt-8 bg-gray-50 border border-gray-200 p-6 rounded-xl">
-      <h2 class="text-2xl font-bold text-blue-700 mb-4">Population Distribution Results</h2>
-      <div class="overflow-x-auto">
-        <table class="w-full border border-gray-300 rounded-lg overflow-hidden">
-          <thead class="bg-blue-100 text-blue-900 font-semibold">
-            <tr>
-              <th class="border px-4 py-2 text-left">Age Group</th>
-              <th class="border px-4 py-2 text-center">Male Population</th>
-              <th class="border px-4 py-2 text-center">Female Population</th>
-            </tr>
-          </thead>
-          <tbody class="text-gray-800">
-            <tr class="hover:bg-gray-100 transition">
-              <td class="border px-4 py-2">5-14 years</td>
-              <td class="border px-4 py-2 text-center">{{ male_numbers[0] }}</td>
-              <td class="border px-4 py-2 text-center">{{ female_numbers[0] }}</td>
-            </tr>
-            <tr class="hover:bg-gray-100 transition">
-              <td class="border px-4 py-2">15-24 years</td>
-              <td class="border px-4 py-2 text-center">{{ male_numbers[1] }}</td>
-              <td class="border px-4 py-2 text-center">{{ female_numbers[1] }}</td>
-            </tr>
-            <tr class="hover:bg-gray-100 transition">
-              <td class="border px-4 py-2">25-49 years</td>
-              <td class="border px-4 py-2 text-center">{{ male_numbers[2] }}</td>
-              <td class="border px-4 py-2 text-center">{{ female_numbers[2] }}</td>
-            </tr>
-            <tr class="hover:bg-gray-100 transition">
-              <td class="border px-4 py-2">50+ years</td>
-              <td class="border px-4 py-2 text-center">{{ male_numbers[3] }}</td>
-              <td class="border px-4 py-2 text-center">{{ female_numbers[3] }}</td>
-            </tr>
-            <tr class="bg-gray-200 font-bold">
-              <td class="border px-4 py-2">Total</td>
-              <td class="border px-4 py-2 text-center">{{ total_male }}</td>
-              <td class="border px-4 py-2 text-center">{{ total_female }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    {% endif %}
-
-  </div>
-</body>
-</html>
+    function exportData() {
+        {% if male_numbers and female_numbers and total_male and total_female %}
+        const data = {
+            summary: {
+                totalMale: {{ total_male }},
+                totalFemale: {{ total_female }},
+                totalPopulation: {{ total_male + total_female }},
+                maleRatio: {{ "%.1f"|format((total_male / (total_male + total_female) * 100)) }}
+            },
+            distribution: {
+                ageGroups: [
+                    { age: "5-14 years", male: {{ male_numbers[0] }}, female: {{ female_numbers[0] }}, total: {{ male_numbers[0] + female_numbers[0] }}, percentage: "20%" },
+                    { age: "15-24 years", male: {{ male_numbers[1] }}, female: {{ female_numbers[1] }}, total: {{ male_numbers[1] + female_numbers[1] }}, percentage: "30%" },
+                    { age: "25-49 years", male: {{ male_numbers[2] }}, female: {{ female_numbers[2] }}, total: {{ male_numbers[2] + female_numbers[2] }}, percentage: "40%" },
+                    { age: "50+ years", male: {{ male_numbers[3] }}, female: {{ female_numbers[3] }}, total: {{ male_numbers[3] + female_numbers[3] }}, percentage: "10%" }
+                ]
+            },
+            generatedAt: new Date().toISOString()
+        };
+        
+        const dataStr = JSON.stringify(data, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `population_distribution_${Date.now()}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+        
+        showNotification('Population data exported successfully!', 'success');
+        {% else %}
+        showNotification('No data available to export. Please calculate distribution first.', 'warning');
+        {% endif %}
+    }
+</script>
+{% endblock %}

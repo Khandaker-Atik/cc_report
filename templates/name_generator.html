@@ -1,53 +1,329 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Name Generator</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-    }
-  </style>
-</head>
-<body class="bg-gradient-to-br from-green-100 via-white to-green-50 min-h-screen">
-  <nav class="bg-green-600 p-4 shadow-md">
-    <div class="container mx-auto flex justify-between items-center">
-      <h1 class="text-white text-2xl font-bold">Name Generator</h1>
-      <a href="/" class="bg-white text-green-700 font-medium px-4 py-2 rounded hover:bg-green-100 transition">
-        Home
-      </a>
-    </div>
-  </nav>
+{% extends "base.html" %}
 
-  <!-- Google Sheets Status -->
-  {% if sheet_info %}
-  <div class="container mx-auto max-w-3xl mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+{% block title %}Name Generator - Community Clinic Data Management{% endblock %}
+
+{% block extra_head %}
+<style>
+  .gender-option {
+    transition: all 0.3s ease;
+  }
+  .gender-option:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .gender-option.selected {
+    border-color: #10b981;
+    background: linear-gradient(135deg, #dcfdf7 0%, #f0fdfa 100%);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="mb-8">
     <div class="flex items-center justify-between">
-      <div class="flex items-center">
-        {% if sheet_info.using_sheets %}
-          <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-          <span class="text-sm text-gray-700">
-            Connected to Google Sheets: {{ sheet_info.male_count }} male names, {{ sheet_info.female_count }} female names
-          </span>
-        {% else %}
-          <div class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
-          <span class="text-sm text-gray-700">Using fallback names (Google Sheets unavailable)</span>
-        {% endif %}
-      </div>
-      <button onclick="refreshNames()" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-        Refresh Names
-      </button>
+        <div>
+            <h1 class="text-4xl font-bold text-gray-800 mb-2 flex items-center">
+                <i class="fas fa-user-plus text-green-600 mr-4"></i>
+                Name Generator
+            </h1>
+            <p class="text-gray-600 text-lg">Generate comprehensive patient profiles with demographic details</p>
+        </div>
+        <div class="hidden md:flex items-center space-x-4">
+            <div class="text-right">
+                <div class="text-sm text-gray-500 uppercase tracking-wide">Smart System</div>
+                <div class="text-lg font-semibold text-gray-800">AI Powered</div>
+            </div>
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-magic text-green-600"></i>
+            </div>
+        </div>
     </div>
-  </div>
-  {% endif %}
+</div>
 
-  <!-- Form Section -->
-  <div class="container mx-auto max-w-3xl mt-6 p-6 bg-white shadow-xl rounded-xl border border-gray-200">
-    <form method="POST" class="space-y-6">
-      <!-- Gender Selection -->
+<!-- Google Sheets Status -->
+{% if sheet_info %}
+<div class="mb-8">
+    <div class="pro-card p-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                {% if sheet_info.using_sheets %}
+                    <div class="status-indicator status-success">
+                        <div class="status-dot bg-green-500"></div>
+                        <span>Connected to Google Sheets: {{ sheet_info.male_count }} male names, {{ sheet_info.female_count }} female names</span>
+                    </div>
+                {% else %}
+                    <div class="status-indicator status-warning">
+                        <div class="status-dot bg-yellow-500"></div>
+                        <span>Using fallback names (Google Sheets unavailable)</span>
+                    </div>
+                {% endif %}
+            </div>
+            <button onclick="refreshNames()" class="btn btn-info">
+                <i class="fas fa-sync-alt mr-2"></i>
+                Refresh Names
+            </button>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="grid lg:grid-cols-3 gap-8">
+    <!-- Form Section -->
+    <div class="lg:col-span-1">
+        <div class="pro-form">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Generate Profile</h2>
+                <p class="text-gray-600">Select gender to generate a complete patient profile</p>
+            </div>
+            
+            <form method="POST" class="space-y-6">
+                <!-- Gender Selection -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-venus-mars mr-2"></i>
+                        Select Gender
+                    </label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="gender-option pro-card p-4 cursor-pointer border-2 border-gray-200 text-center hover:border-blue-300">
+                            <input type="radio" name="gender" value="m" id="male" class="hidden" required>
+                            <div class="flex flex-col items-center">
+                                <i class="fas fa-mars text-blue-600 text-2xl mb-2"></i>
+                                <span class="font-semibold text-gray-800">Male</span>
+                                <span class="text-xs text-gray-500">Generate male profile</span>
+                            </div>
+                        </label>
+                        <label class="gender-option pro-card p-4 cursor-pointer border-2 border-gray-200 text-center hover:border-pink-300">
+                            <input type="radio" name="gender" value="f" id="female" class="hidden">
+                            <div class="flex flex-col items-center">
+                                <i class="fas fa-venus text-pink-600 text-2xl mb-2"></i>
+                                <span class="font-semibold text-gray-800">Female</span>
+                                <span class="text-xs text-gray-500">Generate female profile</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Submit -->
+                <button type="submit" class="btn btn-success w-full">
+                    <i class="fas fa-magic mr-2"></i>
+                    Generate Complete Profile
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Result Section -->
+    <div class="lg:col-span-2">
+        {% if generated_name %}
+        <div class="result-card fade-in">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                    <i class="fas fa-{{ 'male' if gender == 'm' else 'female' }} text-{{ 'blue' if gender == 'm' else 'pink' }}-600 mr-3"></i>
+                    Generated {{ 'Male' if gender == 'm' else 'Female' }} Profile
+                </h2>
+                <button onclick="document.querySelector('form').submit()" class="btn btn-primary">
+                    <i class="fas fa-redo mr-2"></i>
+                    Generate Another
+                </button>
+            </div>
+            
+            <!-- Profile Information -->
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Personal Information -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-700 border-b border-gray-200 pb-2 mb-4">
+                        <i class="fas fa-user mr-2"></i>
+                        Personal Information
+                    </h3>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Full Name</span>
+                        <span class="result-value">{{ generated_name }}</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Father's Name</span>
+                        <span class="result-value">{{ fathers_name }}</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Mother's Name</span>
+                        <span class="result-value">{{ mothers_name }}</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Date of Birth</span>
+                        <span class="result-value">{{ birthdate }}</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Age</span>
+                        <span class="result-value">{{ age }} years</span>
+                    </div>
+                </div>
+
+                <!-- Medical Information -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-700 border-b border-gray-200 pb-2 mb-4">
+                        <i class="fas fa-heartbeat mr-2"></i>
+                        Medical Information
+                    </h3>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Weight</span>
+                        <span class="result-value">{{ weight }} kg</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Height</span>
+                        <span class="result-value">{{ height }} cm</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">BMI</span>
+                        <span class="result-value">{{ "%.1f"|format((weight / ((height/100) ** 2))) }}</span>
+                    </div>
+                    
+                    {% if lmp_date %}
+                    <div class="result-item">
+                        <span class="result-label">LMP Date</span>
+                        <span class="result-value">{{ lmp_date }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="result-item">
+                        <span class="result-label">Gender</span>
+                        <span class="result-value">
+                            <i class="fas fa-{{ 'male' if gender == 'm' else 'female' }} text-{{ 'blue' if gender == 'm' else 'pink' }}-600 mr-1"></i>
+                            {{ 'Male' if gender == 'm' else 'Female' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-8 flex flex-wrap gap-4">
+                <button onclick="window.print()" class="btn btn-info">
+                    <i class="fas fa-print mr-2"></i>
+                    Print Profile
+                </button>
+                <button onclick="copyToClipboard()" class="btn btn-warning">
+                    <i class="fas fa-copy mr-2"></i>
+                    Copy Details
+                </button>
+                <button onclick="exportProfile()" class="btn btn-danger">
+                    <i class="fas fa-download mr-2"></i>
+                    Export Data
+                </button>
+            </div>
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="pro-card p-12 text-center">
+            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-user-plus text-gray-400 text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Ready to Generate</h3>
+            <p class="text-gray-600 max-w-md mx-auto">
+                Select a gender from the form on the left to generate a complete patient profile with all demographic and medical details.
+            </p>
+            
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-2 gap-6 mt-8 max-w-md mx-auto">
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-blue-600">{{ sheet_info.male_count if sheet_info else 'N/A' }}</div>
+                    <div class="text-sm text-gray-500">Male Names Available</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-pink-600">{{ sheet_info.female_count if sheet_info else 'N/A' }}</div>
+                    <div class="text-sm text-gray-500">Female Names Available</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Enhanced gender selection
+    document.addEventListener('DOMContentLoaded', function() {
+        const genderOptions = document.querySelectorAll('.gender-option');
+        const genderInputs = document.querySelectorAll('input[name="gender"]');
+        
+        genderInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                genderOptions.forEach(option => option.classList.remove('selected'));
+                this.closest('.gender-option').classList.add('selected');
+            });
+        });
+        
+        // Remember the last selected gender
+        {% if gender %}
+        const selectedGender = document.getElementById('{{ "male" if gender == "m" else "female" }}');
+        if (selectedGender) {
+            selectedGender.checked = true;
+            selectedGender.dispatchEvent(new Event('change'));
+        }
+        {% endif %}
+    });
+
+    // Copy profile to clipboard
+    function copyToClipboard() {
+        {% if generated_name %}
+        const profileData = `
+Name: {{ generated_name }}
+Father's Name: {{ fathers_name }}
+Mother's Name: {{ mothers_name }}
+Date of Birth: {{ birthdate }}
+Age: {{ age }} years
+Weight: {{ weight }} kg
+Height: {{ height }} cm
+BMI: {{ "%.1f"|format((weight / ((height/100) ** 2))) }}
+Gender: {{ 'Male' if gender == 'm' else 'Female' }}
+{% if lmp_date %}LMP Date: {{ lmp_date }}{% endif %}
+        `.trim();
+        
+        navigator.clipboard.writeText(profileData).then(() => {
+            showNotification('Profile copied to clipboard!', 'success');
+        }).catch(() => {
+            showNotification('Failed to copy profile', 'error');
+        });
+        {% endif %}
+    }
+
+    // Export profile data
+    function exportProfile() {
+        {% if generated_name %}
+        const profileData = {
+            name: "{{ generated_name }}",
+            fathersName: "{{ fathers_name }}",
+            mothersName: "{{ mothers_name }}",
+            dateOfBirth: "{{ birthdate }}",
+            age: {{ age }},
+            weight: {{ weight }},
+            height: {{ height }},
+            bmi: {{ "%.1f"|format((weight / ((height/100) ** 2))) }},
+            gender: "{{ 'Male' if gender == 'm' else 'Female' }}"
+            {% if lmp_date %}, lmpDate: "{{ lmp_date }}"{% endif %}
+        };
+        
+        const dataStr = JSON.stringify(profileData, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `profile_${profileData.name.replace(/\s+/g, '_')}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+        
+        showNotification('Profile exported successfully!', 'success');
+        {% endif %}
+    }
+</script>
+{% endblock %}
       <div>
         <label class="block text-gray-700 text-sm font-semibold mb-2">
           Select Gender

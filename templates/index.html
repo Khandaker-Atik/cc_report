@@ -1,73 +1,226 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Community Clinic Data Management</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-    }
-    .card:hover {
-      transform: translateY(-6px) scale(1.01);
-    }
-  </style>
-</head>
-<body class="bg-gradient-to-br from-gray-100 via-white to-gray-200 min-h-screen">
+{% extends "base.html" %}
 
-  <!-- Navbar -->
-  <nav class="bg-blue-700 shadow-lg">
-    <div class="container mx-auto flex justify-between items-center p-4">
-      <a href="#" onclick="location.reload(); return false;" class="text-white text-2xl font-bold">
-        Community Clinic Data Management
-      </a>
+{% block title %}Dashboard - Community Clinic Data Management{% endblock %}
+
+{% block content %}
+<!-- Features Overview -->
+<div class="grid lg:grid-cols-4 md:grid-cols-2 gap-6 mb-8">
+    <div class="pro-card pro-card-cyan p-6 text-center scale-in">
+        <div class="feature-icon text-cyan-600">
+            <i class="fas fa-users"></i>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">Population Analytics</h3>
+        <p class="text-gray-600 text-sm">Advanced demographic analysis and reporting</p>
     </div>
-  </nav>
-
-  <!-- Main Section -->
-  <main class="container mx-auto max-w-6xl mt-12 px-6">
-    <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">Welcome to Community Clinic Report Generator</h2>
-
-    <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-
-      <!-- Card 1 -->
-      <a href="/population-distribution" class="block transition-transform duration-300 card bg-blue-100 p-6 rounded-2xl shadow hover:shadow-lg">
-        <h3 class="text-2xl font-semibold text-blue-700 mb-2">📊 General Report</h3>
-        <p class="text-gray-700">Generate and view population distribution across different age groups and genders.</p>
-      </a>
-
-      <!-- Card 2 -->
-      <a href="/name-generator" class="block transition-transform duration-300 card bg-green-100 p-6 rounded-2xl shadow hover:shadow-lg">
-        <h3 class="text-2xl font-semibold text-green-700 mb-2">🧍 Name Generator</h3>
-        <p class="text-gray-700">Generate random names for males and females with additional details.</p>
-      </a>
-
-      <!-- Card 3 -->
-      <a href="/child-data" class="block transition-transform duration-300 card bg-purple-100 p-6 rounded-2xl shadow hover:shadow-lg">
-        <h3 class="text-2xl font-semibold text-purple-700 mb-2">📈 Child Growth Data</h3>
-        <p class="text-gray-700">View comprehensive child growth data for boys and girls.</p>
-      </a>
-
-      <!-- Card 4 -->
-      <a href="/age-redistribution" class="block transition-transform duration-300 card bg-red-100 p-6 rounded-2xl shadow hover:shadow-lg">
-        <h3 class="text-2xl font-semibold text-red-700 mb-2">🔄 Age Group Redistribution</h3>
-        <p class="text-gray-700">Redistribute population data across different age group configurations.</p>
-      </a>
-
+    
+    <div class="pro-card pro-card-pink p-6 text-center scale-in">
+        <div class="feature-icon text-pink-600">
+            <i class="fas fa-id-card"></i>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">Smart Name Generator</h3>
+        <p class="text-gray-600 text-sm">AI-powered name generation with Google Sheets integration</p>
     </div>
-  </main>
+    
+    <div class="pro-card pro-card-purple p-6 text-center scale-in">
+        <div class="feature-icon text-purple-600">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">Growth Tracking</h3>
+        <p class="text-gray-600 text-sm">Comprehensive child development monitoring</p>
+    </div>
+    
+    <div class="pro-card pro-card-yellow p-6 text-center scale-in">
+        <div class="feature-icon text-yellow-600">
+            <i class="fas fa-exchange-alt"></i>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">Data Processing</h3>
+        <p class="text-gray-600 text-sm">Advanced age group redistribution algorithms</p>
+    </div>
+</div>
 
-  <!-- Footer -->
-  <footer class="bg-gray-800 text-white text-center py-5 mt-16">
-    <p class="text-sm">
-      &copy; Developed by 
-      <a href="https://khandaker-atik.vercel.app" target="_blank" class="text-yellow-300 hover:text-blue-400 font-semibold transition">
-        Khandaker Atik
-      </a>
-    </p>
-  </footer>
+<!-- Main Feature Cards -->
+<div class="grid lg:grid-cols-2 gap-8">
+    
+    <!-- Population Distribution Card -->
+    <a href="/population-distribution" class="block group">
+        <div class="pro-card pro-card-blue p-8 h-full">
+            <div class="flex items-start justify-between mb-6">
+                <div class="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                    <i class="fas fa-chart-bar text-blue-600 text-2xl"></i>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-blue-600 font-semibold uppercase tracking-wide">Analytics</div>
+                    <div class="text-xs text-gray-500">Data Processing</div>
+                </div>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-3">Population Distribution</h3>
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                Generate comprehensive population reports with advanced demographic analysis across different age groups and gender distributions. Perfect for healthcare planning and resource allocation.
+            </p>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                    <span class="flex items-center">
+                        <i class="fas fa-users mr-1"></i>
+                        Demographics
+                    </span>
+                    <span class="flex items-center">
+                        <i class="fas fa-chart-pie mr-1"></i>
+                        Reports
+                    </span>
+                </div>
+                <div class="text-blue-600 group-hover:translate-x-2 transition-transform">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+        </div>
+    </a>
 
-</body>
-</html>
+    <!-- Name Generator Card -->
+    <a href="/name-generator" class="block group">
+        <div class="pro-card pro-card-green p-8 h-full">
+            <div class="flex items-start justify-between mb-6">
+                <div class="w-16 h-16 bg-green-100 rounded-xl flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                    <i class="fas fa-user-plus text-green-600 text-2xl"></i>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-green-600 font-semibold uppercase tracking-wide">Generator</div>
+                    <div class="text-xs text-gray-500">Smart System</div>
+                </div>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-3">Name Generator</h3>
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                Advanced name generation system with Google Sheets integration. Generate culturally appropriate names with complete demographic details including age, weight, height, and medical information.
+            </p>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                    <span class="flex items-center">
+                        <i class="fas fa-database mr-1"></i>
+                        Google Sheets
+                    </span>
+                    <span class="flex items-center">
+                        <i class="fas fa-magic mr-1"></i>
+                        AI Powered
+                    </span>
+                </div>
+                <div class="text-green-600 group-hover:translate-x-2 transition-transform">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+        </div>
+    </a>
+
+    <!-- Child Growth Data Card -->
+    <a href="/child-data" class="block group">
+        <div class="pro-card pro-card-purple p-8 h-full">
+            <div class="flex items-start justify-between mb-6">
+                <div class="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                    <i class="fas fa-baby text-purple-600 text-2xl"></i>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-purple-600 font-semibold uppercase tracking-wide">Healthcare</div>
+                    <div class="text-xs text-gray-500">Child Development</div>
+                </div>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-3">Child Growth Data</h3>
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                Comprehensive child development tracking system with growth charts, vaccination schedules, and health metrics. Monitor height, weight, and developmental milestones with visual analytics.
+            </p>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                    <span class="flex items-center">
+                        <i class="fas fa-chart-line mr-1"></i>
+                        Growth Charts
+                    </span>
+                    <span class="flex items-center">
+                        <i class="fas fa-syringe mr-1"></i>
+                        Vaccines
+                    </span>
+                </div>
+                <div class="text-purple-600 group-hover:translate-x-2 transition-transform">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+        </div>
+    </a>
+
+    <!-- Age Redistribution Card -->
+    <a href="/age-redistribution" class="block group">
+        <div class="pro-card pro-card-orange p-8 h-full">
+            <div class="flex items-start justify-between mb-6">
+                <div class="w-16 h-16 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-orange-200 transition-colors">
+                    <i class="fas fa-exchange-alt text-orange-600 text-2xl"></i>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-orange-600 font-semibold uppercase tracking-wide">Processing</div>
+                    <div class="text-xs text-gray-500">Data Analysis</div>
+                </div>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-3">Age Redistribution</h3>
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                Advanced demographic redistribution algorithms for male population analysis. Transform age group data with precise mathematical models for accurate healthcare resource planning.
+            </p>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                    <span class="flex items-center">
+                        <i class="fas fa-calculator mr-1"></i>
+                        Algorithms
+                    </span>
+                    <span class="flex items-center">
+                        <i class="fas fa-cogs mr-1"></i>
+                        Processing
+                    </span>
+                </div>
+                <div class="text-orange-600 group-hover:translate-x-2 transition-transform">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- Quick Stats Section -->
+<div class="mt-16 mb-8">
+    <div class="pro-card p-8">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">System Overview</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto">
+                Our comprehensive healthcare data management system provides essential tools for modern community clinics.
+            </p>
+        </div>
+        
+        <div class="grid lg:grid-cols-4 md:grid-cols-2 gap-8">
+            <div class="text-center">
+                <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-database text-blue-600 text-2xl"></i>
+                </div>
+                <div class="text-3xl font-bold text-gray-800 mb-2">4</div>
+                <div class="text-gray-600 font-medium">Core Modules</div>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-cloud text-green-600 text-2xl"></i>
+                </div>
+                <div class="text-3xl font-bold text-gray-800 mb-2">100%</div>
+                <div class="text-gray-600 font-medium">Cloud Integration</div>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-mobile-alt text-purple-600 text-2xl"></i>
+                </div>
+                <div class="text-3xl font-bold text-gray-800 mb-2">100%</div>
+                <div class="text-gray-600 font-medium">Mobile Responsive</div>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-shield-alt text-orange-600 text-2xl"></i>
+                </div>
+                <div class="text-3xl font-bold text-gray-800 mb-2">256</div>
+                <div class="text-gray-600 font-medium">Bit Encryption</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

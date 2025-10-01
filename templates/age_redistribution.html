@@ -1,90 +1,447 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Age Group Redistribution</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-</head>
-<body class="bg-gradient-to-br from-red-50 via-white to-red-100 min-h-screen">
+{% extends "base.html" %}
 
-    <!-- Navbar -->
-    <nav class="bg-red-600 shadow-md">
-        <div class="container mx-auto flex justify-between items-center p-4">
-            <h1 class="text-white text-2xl font-semibold">Age Group Redistribution</h1>
-            <a href="/" class="bg-white text-red-600 hover:bg-red-100 px-4 py-2 rounded font-semibold transition duration-300">
-                Home
-            </a>
+{% block title %}Age Redistribution - Community Clinic Data Management{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="mb-8">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-4xl font-bold text-gray-800 mb-2 flex items-center">
+                <i class="fas fa-exchange-alt text-orange-600 mr-4"></i>
+                Age Group Redistribution
+            </h1>
+            <p class="text-gray-600 text-lg">Transform demographic data with advanced redistribution algorithms</p>
         </div>
-    </nav>
+        <div class="hidden md:flex items-center space-x-4">
+            <div class="text-right">
+                <div class="text-sm text-gray-500 uppercase tracking-wide">Processing</div>
+                <div class="text-lg font-semibold text-gray-800">Data Analysis</div>
+            </div>
+            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-calculator text-orange-600"></i>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <!-- Main Container -->
-    <div class="container mx-auto max-w-4xl mt-10 p-8 bg-white rounded-lg shadow-xl">
-
-        <!-- Form -->
-        <form method="POST" class="space-y-6">
-            <h2 class="text-xl font-bold text-red-600 border-b pb-2">Enter Original Age Group Data</h2>
-            <div class="grid md:grid-cols-2 gap-6">
-                <div>
-                    <label for="original_5_14" class="block text-gray-700 font-medium mb-1">Original 5-14 years</label>
+<div class="grid lg:grid-cols-3 gap-8">
+    <!-- Input Form -->
+    <div class="lg:col-span-1">
+        <div class="pro-form">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Original Age Groups</h2>
+                <p class="text-gray-600">Enter the current male population distribution by age groups</p>
+            </div>
+            
+            <form method="POST" class="space-y-6">
+                <div class="form-group">
+                    <label for="original_5_14" class="form-label">
+                        <i class="fas fa-child mr-2"></i>
+                        5-14 Years Population
+                    </label>
                     <input type="number" name="original_5_14" id="original_5_14" required
-                        class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-400"
-                    />
+                           class="form-control" placeholder="Enter population aged 5-14"
+                           value="{{ original_data['5-14'] if original_data }}">
                 </div>
-                <div>
-                    <label for="original_15_24" class="block text-gray-700 font-medium mb-1">Original 15-24 years</label>
+                
+                <div class="form-group">
+                    <label for="original_15_24" class="form-label">
+                        <i class="fas fa-user-graduate mr-2"></i>
+                        15-24 Years Population
+                    </label>
                     <input type="number" name="original_15_24" id="original_15_24" required
-                        class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-400"
-                    />
+                           class="form-control" placeholder="Enter population aged 15-24"
+                           value="{{ original_data['15-24'] if original_data }}">
                 </div>
-                <div>
-                    <label for="original_25_49" class="block text-gray-700 font-medium mb-1">Original 25-49 years</label>
+                
+                <div class="form-group">
+                    <label for="original_25_49" class="form-label">
+                        <i class="fas fa-user-tie mr-2"></i>
+                        25-49 Years Population
+                    </label>
                     <input type="number" name="original_25_49" id="original_25_49" required
-                        class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-400"
-                    />
+                           class="form-control" placeholder="Enter population aged 25-49"
+                           value="{{ original_data['25-49'] if original_data }}">
                 </div>
-                <div>
-                    <label for="original_50_plus" class="block text-gray-700 font-medium mb-1">Original 50+ years</label>
+                
+                <div class="form-group">
+                    <label for="original_50_plus" class="form-label">
+                        <i class="fas fa-user-clock mr-2"></i>
+                        50+ Years Population
+                    </label>
                     <input type="number" name="original_50_plus" id="original_50_plus" required
-                        class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-400"
-                    />
+                           class="form-control" placeholder="Enter population aged 50+"
+                           value="{{ original_data['50+'] if original_data }}">
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-full">
+                    <i class="fas fa-cogs mr-2"></i>
+                    Process Redistribution
+                </button>
+                
+                {% if redistributed_data %}
+                <button type="button" onclick="exportResults()" class="btn btn-success w-full">
+                    <i class="fas fa-download mr-2"></i>
+                    Export Results
+                </button>
+                {% endif %}
+            </form>
+            
+            <!-- Algorithm Info -->
+            <div class="mt-8 p-4 bg-orange-50 rounded-lg border border-orange-200">
+                <h3 class="font-semibold text-orange-800 mb-3">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Redistribution Algorithm
+                </h3>
+                <div class="text-sm text-orange-700 space-y-2">
+                    <div><strong>5-9 years:</strong> 50% of original 5-14 group</div>
+                    <div><strong>10-19 years:</strong> Remaining 5-14 + 50% of 15-24</div>
+                    <div><strong>20-49 years:</strong> 25-49 group + 50% of 15-24</div>
+                    <div><strong>50+ years:</strong> Unchanged from original</div>
                 </div>
             </div>
-            <div>
-                <button type="submit"
-                    class="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-2 rounded shadow transition duration-300">
-                    Redistribute Age Groups
-                </button>
-            </div>
-        </form>
+        </div>
+    </div>
 
-        <!-- Output Table -->
+    <!-- Results Section -->
+    <div class="lg:col-span-2">
         {% if redistributed_data %}
-        <div class="mt-10 bg-red-50 border border-red-200 p-6 rounded-lg">
-            <h2 class="text-xl font-bold text-red-700 mb-4">Redistributed Age Groups</h2>
-            <div class="overflow-x-auto">
-                <table class="min-w-full bg-white border border-gray-200 rounded">
-                    <thead class="bg-red-100 text-red-800 font-semibold">
-                        <tr>
-                            <th class="border px-4 py-2 text-left">Original Age Group</th>
-                            <th class="border px-4 py-2 text-center">Total Population</th>
-                            <th class="border px-4 py-2 text-center">Redistributed Population</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-gray-700">
-                        {% for original_group, total_population, redistributed_population in redistributed_data %}
-                        <tr class="hover:bg-red-50 transition">
-                            <td class="border px-4 py-2">{{ original_group }}</td>
-                            <td class="border px-4 py-2 text-center">{{ total_population }}</td>
-                            <td class="border px-4 py-2 text-center">{{ redistributed_population }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+        <div class="space-y-6">
+            <!-- Summary Cards -->
+            <div class="grid md:grid-cols-2 gap-4 mb-6">
+                <div class="pro-card pro-card-orange p-6 text-center">
+                    <div class="text-3xl font-bold text-orange-600">
+                        {{ original_data['5-14'] + original_data['15-24'] + original_data['25-49'] + original_data['50+'] }}
+                    </div>
+                    <div class="text-sm text-gray-600">Total Male Population</div>
+                </div>
+                <div class="pro-card pro-card-blue p-6 text-center">
+                    <div class="text-3xl font-bold text-blue-600">4</div>
+                    <div class="text-sm text-gray-600">Age Groups Processed</div>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="result-card">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        <i class="fas fa-table mr-3"></i>
+                        Age Group Redistribution Results
+                    </h2>
+                    <button onclick="toggleView()" class="btn btn-info">
+                        <i class="fas fa-chart-bar mr-2"></i>
+                        View Chart
+                    </button>
+                </div>
+                
+                <div id="tableView" class="overflow-x-auto">
+                    <table class="pro-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <i class="fas fa-users mr-2"></i>
+                                    Original Age Group
+                                </th>
+                                <th class="text-center">
+                                    <i class="fas fa-hashtag mr-2"></i>
+                                    Original Population
+                                </th>
+                                <th class="text-center">
+                                    <i class="fas fa-arrow-right mr-2"></i>
+                                    Redistributed Age Group
+                                </th>
+                                <th class="text-center">
+                                    <i class="fas fa-calculator mr-2"></i>
+                                    New Population
+                                </th>
+                                <th class="text-center">
+                                    <i class="fas fa-percentage mr-2"></i>
+                                    Change
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for original_group, original_pop, redistributed_pop in redistributed_data %}
+                            <tr>
+                                <td class="font-semibold">{{ original_group }}</td>
+                                <td class="text-center font-semibold text-blue-600">{{ original_pop }}</td>
+                                <td class="text-center">
+                                    {% if original_group == '5-14 years' %}
+                                        5-9 years
+                                    {% elif original_group == '15-24 years' %}
+                                        10-19 years
+                                    {% elif original_group == '25-49 years' %}
+                                        20-49 years
+                                    {% else %}
+                                        50+ years
+                                    {% endif %}
+                                </td>
+                                <td class="text-center font-semibold text-orange-600">{{ redistributed_pop }}</td>
+                                <td class="text-center">
+                                    {% set change = ((redistributed_pop - original_pop) / original_pop * 100) if original_pop > 0 else 0 %}
+                                    <span class="{% if change > 0 %}text-green-600{% elif change < 0 %}text-red-600{% else %}text-gray-600{% endif %} font-semibold">
+                                        {% if change > 0 %}+{% endif %}{{ "%.1f"|format(change) }}%
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="bg-gray-50">
+                            <tr class="font-bold text-lg">
+                                <td>Total</td>
+                                <td class="text-center text-blue-600">
+                                    {{ original_data['5-14'] + original_data['15-24'] + original_data['25-49'] + original_data['50+'] }}
+                                </td>
+                                <td class="text-center">All Groups</td>
+                                <td class="text-center text-orange-600">
+                                    {% set total_redistributed = redistributed_data|sum(attribute=2) %}
+                                    {{ total_redistributed }}
+                                </td>
+                                <td class="text-center text-gray-600">0.0%</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Chart View -->
+                <div id="chartView" class="hidden">
+                    <canvas id="redistributionChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Detailed Breakdown -->
+            <div class="pro-card p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-list-alt mr-2"></i>
+                    Redistribution Breakdown
+                </h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    {% for original_group, original_pop, redistributed_pop in redistributed_data %}
+                    <div class="p-4 border border-gray-200 rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-semibold text-gray-700">{{ original_group }}</span>
+                            <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-sm">
+                                {{ original_pop }} → {{ redistributed_pop }}
+                            </span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            {% set total = original_data['5-14'] + original_data['15-24'] + original_data['25-49'] + original_data['50+'] %}
+                            {% set percentage = (redistributed_pop / total * 100) if total > 0 else 0 %}
+                            <div class="bg-orange-500 h-2 rounded-full" style="width: {{ percentage }}%"></div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">
+                            {{ "%.1f"|format(percentage) }}% of total population
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="pro-card p-12 text-center">
+            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-exchange-alt text-gray-400 text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Ready to Process</h3>
+            <p class="text-gray-600 max-w-md mx-auto mb-8">
+                Enter the original male population numbers by age groups to see how they redistribute according to our advanced algorithm.
+            </p>
+            
+            <!-- Example Data -->
+            <div class="bg-gray-50 rounded-lg p-6 max-w-2xl mx-auto">
+                <h4 class="font-semibold text-gray-800 mb-4">Example Redistribution</h4>
+                <div class="grid md:grid-cols-2 gap-6 text-sm">
+                    <div>
+                        <div class="font-semibold text-gray-700 mb-2">Original Groups:</div>
+                        <div class="space-y-1 text-gray-600">
+                            <div class="flex justify-between">
+                                <span>5-14 years:</span>
+                                <span>200</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>15-24 years:</span>
+                                <span>300</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>25-49 years:</span>
+                                <span>400</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>50+ years:</span>
+                                <span>100</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-gray-700 mb-2">Redistributed Groups:</div>
+                        <div class="space-y-1 text-gray-600">
+                            <div class="flex justify-between">
+                                <span>5-9 years:</span>
+                                <span>100</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>10-19 years:</span>
+                                <span>250</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>20-49 years:</span>
+                                <span>550</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>50+ years:</span>
+                                <span>100</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         {% endif %}
     </div>
+</div>
+{% endblock %}
 
-</body>
-</html>
+{% block extra_scripts %}
+<script>
+    let chartVisible = false;
+    let redistributionChart = null;
+
+    function toggleView() {
+        const tableView = document.getElementById('tableView');
+        const chartView = document.getElementById('chartView');
+        const toggleBtn = document.querySelector('[onclick="toggleView()"]');
+        
+        if (chartVisible) {
+            tableView.classList.remove('hidden');
+            chartView.classList.add('hidden');
+            toggleBtn.innerHTML = '<i class="fas fa-chart-bar mr-2"></i>View Chart';
+            chartVisible = false;
+        } else {
+            tableView.classList.add('hidden');
+            chartView.classList.remove('hidden');
+            toggleBtn.innerHTML = '<i class="fas fa-table mr-2"></i>View Table';
+            chartVisible = true;
+            
+            if (!redistributionChart) {
+                createChart();
+            }
+        }
+    }
+
+    function createChart() {
+        const ctx = document.getElementById('redistributionChart').getContext('2d');
+        
+        {% if original_data and redistributed_data %}
+        const originalData = [
+            {{ original_data['5-14'] }},
+            {{ original_data['15-24'] }},
+            {{ original_data['25-49'] }},
+            {{ original_data['50+'] }}
+        ];
+        
+        const redistributedData = [
+            {% for _, _, redistributed_pop in redistributed_data %}{{ redistributed_pop }}{% if not loop.last %},{% endif %}{% endfor %}
+        ];
+        {% else %}
+        const originalData = [0, 0, 0, 0];
+        const redistributedData = [0, 0, 0, 0];
+        {% endif %}
+        
+        redistributionChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['5-14 → 5-9', '15-24 → 10-19', '25-49 → 20-49', '50+ → 50+'],
+                datasets: [{
+                    label: 'Original Population',
+                    data: originalData,
+                    backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 2,
+                    borderRadius: 8
+                }, {
+                    label: 'Redistributed Population',
+                    data: redistributedData,
+                    backgroundColor: 'rgba(249, 115, 22, 0.7)',
+                    borderColor: 'rgba(249, 115, 22, 1)',
+                    borderWidth: 2,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Population'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Age Group Transformation'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: 'white',
+                        bodyColor: 'white'
+                    }
+                },
+                animation: {
+                    duration: 1500,
+                    easing: 'easeInOutQuart'
+                }
+            }
+        });
+    }
+
+    function exportResults() {
+        {% if original_data and redistributed_data %}
+        const data = {
+            originalData: {
+                "5-14": {{ original_data['5-14'] }},
+                "15-24": {{ original_data['15-24'] }},
+                "25-49": {{ original_data['25-49'] }},
+                "50+": {{ original_data['50+'] }}
+            },
+            redistributedData: [
+                {% for original_group, original_pop, redistributed_pop in redistributed_data %}
+                {
+                    originalGroup: "{{ original_group }}",
+                    originalPopulation: {{ original_pop }},
+                    redistributedPopulation: {{ redistributed_pop }},
+                    change: {{ ((redistributed_pop - original_pop) / original_pop * 100) if original_pop > 0 else 0 }}
+                }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
+            totalOriginal: {{ original_data['5-14'] + original_data['15-24'] + original_data['25-49'] + original_data['50+'] }},
+            totalRedistributed: {% set total_redistributed = redistributed_data|sum(attribute=2) %}{{ total_redistributed }},
+            generatedAt: new Date().toISOString()
+        };
+        
+        const dataStr = JSON.stringify(data, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `age_redistribution_${Date.now()}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+        
+        showNotification('Redistribution data exported successfully!', 'success');
+        {% else %}
+        showNotification('No data available to export. Please process redistribution first.', 'warning');
+        {% endif %}
+    }
+</script>
+{% endblock %}
